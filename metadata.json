@@ -1,0 +1,6 @@
+{
+  "name": "RouteWise AI",
+  "description": "AI-powered urban survival intelligence platform for Nairobi. Predicts traffic, weather, fare surges, and social signals with a local street-smart personality.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation for Report
+    function isValidReport(data) {
+      return data.size() == 6
+        && data.type is string
+        && data.type in ["accident", "pothole", "broken-down vehicle", "illegal parking", "protest gathering", "other"]
+        && data.description is string && data.description.size() <= 500
+        && data.latitude is number
+        && data.longitude is number
+        && data.createdAt == request.time
+        && data.userId == request.auth.uid;
+    }
+
+    match /reports/{reportId} {
+      allow list: if true; // Allow public reading for common awareness
+      allow get: if true;
+      
+      allow create: if isSignedIn() 
+        && isValidId(reportId)
+        && isValidReport(incoming());
+        
+      allow update: if false; // Reports are immutable for simplicity and integrity
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+  }
+}

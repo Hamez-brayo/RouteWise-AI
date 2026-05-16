@@ -1,0 +1,28 @@
+{
+  "entities": {
+    "Report": {
+      "title": "Incident Report",
+      "description": "A user-submitted incident report in Nairobi.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { 
+          "type": "string", 
+          "enum": ["accident", "pothole", "broken-down vehicle", "illegal parking", "protest gathering", "other"] 
+        },
+        "description": { "type": "string" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "userId": { "type": "string" }
+      },
+      "required": ["type", "description", "latitude", "longitude", "createdAt", "userId"]
+    }
+  },
+  "firestore": {
+    "/reports/{reportId}": {
+      "schema": "Report",
+      "description": "Collection of real-time incident reports."
+    }
+  }
+}
